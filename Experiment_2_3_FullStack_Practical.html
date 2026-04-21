@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Full Stack MERN Practicals — Exp 2.3.1 / 2.3.2 / 2.3.3</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0b0e1a;
+      --surface: #111827;
+      --card: #1a2235;
+      --border: #1f2d45;
+      --accent: #3b82f6;
+      --accent2: #8b5cf6;
+      --accent3: #10b981;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Sora', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+    }
+    /* ── NAV TABS ── */
+    .lab-nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+      padding: 0 1.5rem;
+      display: flex; align-items: center; gap: 0;
+    }
+    .lab-logo {
+      font-family: var(--mono);
+      font-size: .8rem; font-weight: 700;
+      color: var(--accent);
+      padding: 1rem 1.5rem 1rem 0;
+      border-right: 1px solid var(--border);
+      margin-right: 1rem;
+      white-space: nowrap;
+    }
+    .lab-logo span { color: var(--text); }
+    .nav-tab {
+      padding: .85rem 1.2rem;
+      cursor: pointer;
+      font-size: .78rem; font-weight: 600; letter-spacing: .04em;
+      color: var(--muted);
+      border-bottom: 2px solid transparent;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .nav-tab:hover { color: var(--text); }
+    .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    /* ── PANELS ── */
+    .panel { display: none; animation: fadeUp .35s ease; }
+    .panel.active { display: block; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    /* ── EXP HEADER ── */
+    .exp-header {
+      background: linear-gradient(135deg, var(--surface) 0%, #0f1729 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 2rem 2rem;
+    }
+    .exp-badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: .65rem; font-weight: 700; letter-spacing: .12em;
+      padding: .25rem .7rem; border-radius: 2px;
+      margin-bottom: .75rem;
+    }
+    .badge-blue  { background: #1d3461; color: var(--accent); }
+    .badge-purple{ background: #2d1f5e; color: #a78bfa; }
+    .badge-green { background: #0a2e22; color: var(--accent3); }
+    .exp-title {
+      font-size: 1.6rem; font-weight: 800; line-height: 1.2;
+      margin-bottom: .5rem;
+    }
+    .exp-sub { color: var(--muted); font-size: .85rem; max-width: 700px; }
+    /* ── CONTENT AREA ── */
+    .content { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+    /* ── SECTION CARDS ── */
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-title {
+      font-family: var(--mono);
+      font-size: .7rem; font-weight: 700; letter-spacing: .15em;
+      color: var(--muted); text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .section-title::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    /* ── CODE BLOCK ── */
+    .code-block {
+      background: #070c18;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem;
+      font-family: var(--mono);
+      font-size: .72rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      position: relative;
+    }
+    .code-header {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #0c1222;
+      border: 1px solid var(--border); border-bottom: none;
+      border-radius: 6px 6px 0 0;
+      padding: .5rem 1rem;
+      font-family: var(--mono); font-size: .65rem; color: var(--muted);
+    }
+    .code-header + .code-block { border-radius: 0 0 6px 6px; }
+    .copy-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); padding: .2rem .6rem;
+      border-radius: 4px; font-size: .6rem; cursor: pointer;
+      font-family: var(--mono); transition: all .2s;
+    }
+    .copy-btn:hover { color: var(--text); border-color: var(--accent); }
+    .kw  { color: #818cf8; }
+    .str { color: #34d399; }
+    .fn  { color: #60a5fa; }
+    .cm  { color: #475569; font-style: italic; }
+    .num { color: #f59e0b; }
+    .tag { color: #f472b6; }
+    /* ── LIVE DEMO ── */
+    .demo-frame {
+      background: #070c18;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .demo-toolbar {
+      background: #0c1222;
+      border-bottom: 1px solid var(--border);
+      padding: .6rem 1rem;
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .7rem; color: var(--muted); font-family: var(--mono);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #ef4444; }
+    .dot-y { background: #f59e0b; }
+    .dot-g { background: #22c55e; }
+    .demo-body { padding: 1.5rem; }
+    /* ── PRODUCTS GRID (Exp 1) ── */
+    .product-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      transition: transform .2s, border-color .2s;
+    }
+    .product-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .product-img {
+      width: 100%; height: 120px;
+      border-radius: 6px; object-fit: cover;
+      background: linear-gradient(135deg, #1e3a5f, #0f2744);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; margin-bottom: .75rem;
+    }
+    .product-name { font-weight: 700; font-size: .9rem; margin-bottom: .25rem; }
+    .product-price { color: var(--accent3); font-family: var(--mono); font-size: .85rem; font-weight: 700; }
+    .product-cat { font-size: .7rem; color: var(--muted); margin-bottom: .5rem; }
+    .spinner-ring {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* ── CART (Exp 2) ── */
+    .cart-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: .75rem;
+      transition: border-color .2s;
+    }
+    .cart-item:hover { border-color: var(--accent2); }
+    .cart-icon { font-size: 2rem; width: 48px; text-align: center; }
+    .cart-info { flex: 1; }
+    .cart-name { font-weight: 700; font-size: .9rem; }
+    .cart-price { color: var(--accent3); font-family: var(--mono); font-size: .8rem; }
+    .qty-controls { display: flex; align-items: center; gap: .5rem; }
+    .qty-btn {
+      width: 28px; height: 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; font-weight: 700; transition: all .15s;
+    }
+    .qty-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+    .qty-val { font-family: var(--mono); font-size: .85rem; min-width: 20px; text-align: center; }
+    .remove-btn {
+      background: none; border: 1px solid #2a1515; border-radius: 4px;
+      color: var(--danger); padding: .3rem .5rem; cursor: pointer;
+      font-size: .75rem; transition: all .15s;
+    }
+    .remove-btn:hover { background: #2a1515; }
+    .cart-total-bar {
+      background: #0c1222;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .total-label { font-size: .8rem; color: var(--muted); }
+    .total-amount { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; color: var(--accent3); }
+    .checkout-btn {
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      color: white; border: none; border-radius: 6px;
+      padding: .6rem 1.5rem; font-size: .8rem; font-weight: 700;
+      cursor: pointer; transition: opacity .2s;
+    }
+    .checkout-btn:hover { opacity: .85; }
+    .redux-state {
+      background: #070c18;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      font-family: var(--mono);
+      font-size: .65rem; line-height: 1.8;
+      color: #94a3b8;
+    }
+    /* ── CHAT (Exp 3) ── */
+    .chat-container {
+      display: flex; height: 480px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+    }
+    .sidebar {
+      width: 200px;
+      background: #0c1222;
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+    }
+    .sidebar-header {
+      padding: .75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: .7rem; font-weight: 700; color: var(--muted); letter-spacing: .1em;
+    }
+    .online-user {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .5rem 1rem;
+      font-size: .78rem;
+    }
+    .avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .65rem; font-weight: 700; flex-shrink: 0;
+    }
+    .online-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent3); margin-left: auto; flex-shrink: 0;
+    }
+    .chat-main { flex: 1; display: flex; flex-direction: column; }
+    .chat-header {
+      background: #0c1222;
+      border-bottom: 1px solid var(--border);
+      padding: .75rem 1rem;
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .chat-title { font-weight: 700; font-size: .85rem; }
+    .chat-sub { font-size: .65rem; color: var(--accent3); }
+    .messages-area {
+      flex: 1; overflow-y: auto;
+      padding: 1rem; display: flex; flex-direction: column; gap: .75rem;
+    }
+    .messages-area::-webkit-scrollbar { width: 4px; }
+    .messages-area::-webkit-scrollbar-track { background: transparent; }
+    .messages-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .msg-row { display: flex; gap: .6rem; }
+    .msg-row.own { flex-direction: row-reverse; }
+    .msg-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .6rem; font-weight: 700; flex-shrink: 0; margin-top: .1rem;
+    }
+    .msg-bubble {
+      max-width: 70%;
+      padding: .5rem .85rem;
+      border-radius: 12px;
+      font-size: .8rem; line-height: 1.5;
+    }
+    .msg-bubble.them {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top-left-radius: 2px;
+    }
+    .msg-bubble.own-bubble {
+      background: linear-gradient(135deg, #1d3461, #1a2580);
+      border: 1px solid #2a3d7a;
+      border-top-right-radius: 2px;
+    }
+    .msg-meta {
+      font-size: .6rem; color: var(--muted); margin-bottom: .2rem;
+    }
+    .msg-row.own .msg-meta { text-align: right; }
+    .system-msg {
+      text-align: center;
+      font-size: .65rem; color: var(--muted); font-family: var(--mono);
+      padding: .3rem;
+    }
+    .typing-indicator {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .65rem; color: var(--muted);
+      padding: 0 1rem .5rem;
+      min-height: 20px;
+    }
+    .typing-dots { display: flex; gap: 3px; }
+    .typing-dots span {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--muted);
+      animation: blink 1.2s infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: .2s; }
+    .typing-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes blink { 0%,80%,100% { opacity: .2; } 40% { opacity: 1; } }
+    .chat-input-row {
+      border-top: 1px solid var(--border);
+      padding: .75rem 1rem;
+      display: flex; gap: .5rem;
+    }
+    .chat-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .5rem .85rem;
+      color: var(--text); font-family: var(--sans); font-size: .82rem;
+      outline: none; transition: border-color .2s;
+    }
+    .chat-input:focus { border-color: var(--accent); }
+    .send-btn {
+      background: var(--accent); color: white; border: none;
+      border-radius: 6px; padding: .5rem .9rem;
+      cursor: pointer; font-size: .85rem; transition: opacity .2s;
+    }
+    .send-btn:hover { opacity: .85; }
+    /* ── LOGIN SCREEN ── */
+    .login-screen {
+      display: flex; align-items: center; justify-content: center;
+      height: 480px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 2rem 2.5rem;
+      text-align: center; width: 300px;
+    }
+    .login-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .login-title { font-weight: 800; font-size: 1.1rem; margin-bottom: .3rem; }
+    .login-sub { font-size: .75rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .login-input {
+      width: 100%;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 6px; padding: .6rem .9rem;
+      color: var(--text); font-family: var(--sans); font-size: .85rem;
+      outline: none; margin-bottom: .75rem; transition: border-color .2s;
+    }
+    .login-input:focus { border-color: var(--accent3); }
+    .login-btn {
+      width: 100%; background: var(--accent3); color: #0a1f15;
+      border: none; border-radius: 6px; padding: .65rem;
+      font-weight: 700; font-size: .85rem; cursor: pointer;
+      transition: opacity .2s;
+    }
+    .login-btn:hover { opacity: .85; }
+    /* ── TABS within demo ── */
+    .info-tabs { display: flex; gap: .5rem; margin-bottom: 1rem; }
+    .info-tab {
+      padding: .35rem .85rem; border-radius: 4px;
+      font-size: .72rem; font-weight: 600; cursor: pointer;
+      border: 1px solid var(--border); color: var(--muted);
+      transition: all .2s;
+    }
+    .info-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .info-pane { display: none; }
+    .info-pane.active { display: block; }
+    /* ── UTILS ── */
+    .btn-sm-acc {
+      background: var(--accent); color: white; border: none;
+      border-radius: 5px; padding: .35rem .8rem;
+      font-size: .72rem; font-weight: 600; cursor: pointer;
+      transition: opacity .2s;
+    }
+    .btn-sm-acc:hover { opacity: .8; }
+    .alert-error {
+      background: #1f0c0c; border: 1px solid #5b1a1a;
+      border-radius: 6px; padding: .75rem 1rem;
+      font-size: .8rem; color: #f87171;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .alert-success {
+      background: #071f14; border: 1px solid #0e4a28;
+      border-radius: 6px; padding: .75rem 1rem;
+      font-size: .8rem; color: #4ade80;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .tag-badge {
+      display: inline-block; padding: .15rem .5rem;
+      border-radius: 3px; font-size: .65rem; font-weight: 600;
+      font-family: var(--mono);
+    }
+    .tag-express { background: #1a2e1a; color: #86efac; }
+    .tag-react   { background: #0c1f3a; color: #7dd3fc; }
+    .tag-mongo   { background: #0f2010; color: #6ee7b7; }
+    .tag-redux   { background: #220c42; color: #c4b5fd; }
+    .tag-socket  { background: #1a1020; color: #f0abfc; }
+    /* ── GRID HELPERS ── */
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
+    @media(max-width:768px){
+      .grid-3,.grid-2 { grid-template-columns: 1fr; }
+      .chat-container { flex-direction: column; height: auto; }
+      .sidebar { width: 100%; height: 100px; flex-direction: row; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ STICKY NAV ══ -->
+<nav class="lab-nav">
+  <div class="lab-logo">MERN<span>/LAB</span></div>
+  <div class="nav-tab active" onclick="switchTab('exp1',this)">2.3.1 — Products API</div>
+  <div class="nav-tab" onclick="switchTab('exp2',this)">2.3.2 — Redux Cart</div>
+  <div class="nav-tab" onclick="switchTab('exp3',this)">2.3.3 — Live Chat</div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     EXPERIMENT 2.3.1 — React-Express-Axios
+═══════════════════════════════════════════ -->
+<div id="panel-exp1" class="panel active">
+  <div class="exp-header">
+    <div class="exp-badge badge-blue">EXPERIMENT 2.3.1</div>
+    <div class="exp-title">React + Express + Axios Integration</div>
+    <div class="exp-sub">Full-stack product listing: RESTful Express API → Axios HTTP client → React UI with loading/error states</div>
+    <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap;">
+      <span class="tag-badge tag-express">Express 4.18</span>
+      <span class="tag-badge tag-react">React 18</span>
+      <span class="tag-badge tag-mongo">MongoDB</span>
+      <span class="tag-badge" style="background:#1a1a0a;color:#fcd34d;">Axios 1.6</span>
+      <span class="tag-badge" style="background:#0a1a2a;color:#93c5fd;">Bootstrap 5.3</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- 1. Architecture -->
+    <div class="section-card">
+      <div class="section-title"><i class="bi bi-diagram-3"></i> Architecture</div>
+      <div class="grid-3" style="gap:.75rem;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1rem;text-align:center;">
+          <div style="font-size:1.6rem;margin-bottom:.5rem;">⚛️</div>
+          <div style="font-weight:700;font-size:.85rem;">React Frontend</div>
+          <div style="font-size:.7rem;color:var(--muted);margin-top:.3rem;">Components, State, Axios</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1rem;text-align:center;position:relative;">
+          <div style="position:absolute;top:50%;left:-12px;transform:translateY(-50%);color:var(--accent);font-size:1rem;">→</div>
+          <div style="position:absolute;top:50%;right:-12px;transform:translateY(-50%);color:var(--accent);font-size:1rem;">→</div>
+          <div style="font-size:1.6rem;margin-bottom:.5rem;">🟢</div>
+          <div style="font-weight:700;font-size:.85rem;">Express API</div>
+          <div style="font-size:.7rem;color:var(--muted);margin-top:.3rem;">GET /api/products</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1rem;text-align:center;">
+          <div style="font-size:1.6rem;margin-bottom:.5rem;">🍃</div>
+          <div style="font-weight:700;font-size:.85rem;">MongoDB</div>
+          <div style="font-size:.7rem;color:var(--muted);margin-top:.3rem;">Products Collection</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Backend Code -->
+    <div class="section-card">
+      <div class="section-title"><i class="bi bi-server"></i> Express Backend — server.js</div>
+      <div class="code-header">
+        <span>server.js — Node.js + Express + MongoDB</span>
+        <button class="copy-btn" onclick="copyCode('server-code')">Copy</button>
+      </div>
+      <pre class="code-block" id="server-code"><span class="cm">// server.js — Express REST API</span>
+<span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> mongoose = <span class="fn">require</span>(<span class="str">'mongoose'</span>);
+<span class="kw">const</span> cors = <span class="fn">require</span>(<span class="str">'cors'</span>);
+<span class="kw">const</span> app = <span class="fn">express</span>();
+
+app.<span class="fn">use</span>(<span class="fn">cors</span>());
+app.<span class="fn">use</span>(express.<span class="fn">json</span>());
+
+<span class="cm">// MongoDB Connection</span>
+mongoose.<span class="fn">connect</span>(<span class="str">'mongodb://localhost:27017/mernlab'</span>)
+  .<span class="fn">then</span>(() => console.<span class="fn">log</span>(<span class="str">'MongoDB Connected'</span>));
+
+<span class="cm">// Product Schema</span>
+<span class="kw">const</span> productSchema = <span class="kw">new</span> mongoose.<span class="fn">Schema</span>({
+  name:     { type: String, required: <span class="kw">true</span> },
+  price:    { type: Number, required: <span class="kw">true</span> },
+  category: String,
+  emoji:    String,
+  inStock:  { type: Boolean, default: <span class="kw">true</span> }
+});
+<span class="kw">const</span> Product = mongoose.<span class="fn">model</span>(<span class="str">'Product'</span>, productSchema);
+
+<span class="cm">// GET all products</span>
+app.<span class="fn">get</span>(<span class="str">'/api/products'</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> products = <span class="kw">await</span> Product.<span class="fn">find</span>();
+    res.<span class="fn">json</span>({ success: <span class="kw">true</span>, data: products });
+  } <span class="kw">catch</span>(err) {
+    res.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: err.message });
+  }
+});
+
+<span class="cm">// POST add product</span>
+app.<span class="fn">post</span>(<span class="str">'/api/products'</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> product = <span class="kw">new</span> <span class="fn">Product</span>(req.body);
+    <span class="kw">await</span> product.<span class="fn">save</span>();
+    res.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>({ success: <span class="kw">true</span>, data: product });
+  } <span class="kw">catch</span>(err) {
+    res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, message: err.message });
+  }
+});
+
+app.<span class="fn">listen</span>(<span class="num">5000</span>, () => console.<span class="fn">log</span>(<span class="str">'Server running on port 5000'</span>));</pre>
+
+      <div class="code-header" style="margin-top:1rem;">
+        <span>App.jsx — React + Axios</span>
+        <button class="copy-btn" onclick="copyCode('react-code')">Copy</button>
+      </div>
+      <pre class="code-block" id="react-code"><span class="kw">import</span> React, { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> axios <span class="kw">from</span> <span class="str">'axios'</span>;
+<span class="kw">import</span> <span class="str">'bootstrap/dist/css/bootstrap.min.css'</span>;
+
+<span class="kw">const</span> <span class="fn">ProductCard</span> = ({ product }) => (
+  <span class="tag">&lt;div</span> className=<span class="str">"col-md-4 mb-4"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;div</span> className=<span class="str">"card h-100 shadow-sm"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> className=<span class="str">"card-body"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;h5</span> className=<span class="str">"card-title"</span><span class="tag">&gt;</span>{product.emoji} {product.name}<span class="tag">&lt;/h5&gt;</span>
+        <span class="tag">&lt;p</span> className=<span class="str">"text-muted"</span><span class="tag">&gt;</span>{product.category}<span class="tag">&lt;/p&gt;</span>
+        <span class="tag">&lt;h6</span> className=<span class="str">"text-success"</span><span class="tag">&gt;</span>₹{product.price}<span class="tag">&lt;/h6&gt;</span>
+      <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+);
+
+<span class="kw">export default function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [products, setProducts] = <span class="fn">useState</span>([]);
+  <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">true</span>);
+  <span class="kw">const</span> [error, setError] = <span class="fn">useState</span>(<span class="kw">null</span>);
+
+  <span class="fn">useEffect</span>(() => {
+    axios.<span class="fn">get</span>(<span class="str">'http://localhost:5000/api/products'</span>)
+      .<span class="fn">then</span>(res => {
+        setProducts(res.data.data);
+        <span class="fn">setLoading</span>(<span class="kw">false</span>);
+      })
+      .<span class="fn">catch</span>(err => {
+        <span class="fn">setError</span>(err.message);
+        <span class="fn">setLoading</span>(<span class="kw">false</span>);
+      });
+  }, []);
+
+  <span class="kw">if</span> (loading) <span class="kw">return</span> (
+    <span class="tag">&lt;div</span> className=<span class="str">"d-flex justify-content-center mt-5"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> className=<span class="str">"spinner-border text-primary"</span><span class="tag">/&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+
+  <span class="kw">if</span> (error) <span class="kw">return</span> (
+    <span class="tag">&lt;div</span> className=<span class="str">"alert alert-danger m-4"</span><span class="tag">&gt;</span>
+      Error: {error}
+    <span class="tag">&lt;/div&gt;</span>
+  );
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div</span> className=<span class="str">"container mt-4"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;h2&gt;</span>Products<span class="tag">&lt;/h2&gt;</span>
+      <span class="tag">&lt;div</span> className=<span class="str">"row"</span><span class="tag">&gt;</span>
+        {products.<span class="fn">map</span>(p => (
+          <span class="tag">&lt;ProductCard</span> key={p._id} product={p} <span class="tag">/&gt;</span>
+        ))}
+      <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}</pre>
+    </div>
+
+    <!-- 3. Live Demo -->
+    <div class="section-card">
+      <div class="section-title"><i class="bi bi-play-circle"></i> Live Demo Output</div>
+      <div class="demo-frame">
+        <div class="demo-toolbar">
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+          <span style="margin-left:.5rem;">localhost:3000 — Products</span>
+          <span style="margin-left:auto;" id="fetchStatus">●  idle</span>
+        </div>
+        <div class="demo-body">
+          <!-- State buttons -->
+          <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+            <button class="btn-sm-acc" onclick="exp1Show('loading')"><i class="bi bi-arrow-clockwise"></i> Simulate Loading</button>
+            <button class="btn-sm-acc" onclick="exp1Show('products')" style="background:var(--accent3);">Fetch Products</button>
+            <button class="btn-sm-acc" onclick="exp1Show('error')" style="background:var(--danger);">Simulate Error</button>
+          </div>
+
+          <!-- Loading state -->
+          <div id="exp1-loading" style="display:none;text-align:center;padding:2rem 0;">
+            <div class="spinner-ring" style="margin:0 auto 1rem;"></div>
+            <div style="font-size:.8rem;color:var(--muted);">Fetching from API...</div>
+          </div>
+
+          <!-- Error state -->
+          <div id="exp1-error" style="display:none;">
+            <div class="alert-error"><i class="bi bi-exclamation-triangle-fill"></i> Network Error: Failed to fetch from http://localhost:5000/api/products</div>
+          </div>
+
+          <!-- Products grid -->
+          <div id="exp1-products" style="display:none;">
+            <div class="alert-success" style="margin-bottom:1rem;"><i class="bi bi-check-circle-fill"></i> 6 products fetched from MongoDB — GET /api/products 200 OK</div>
+            <div class="grid-3" id="product-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Objectives Checklist -->
+    <div class="section-card">
+      <div class="section-title"><i class="bi bi-list-check"></i> Objectives Achieved</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;">
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;">
+          <span style="color:var(--accent3);font-size:1rem;">✓</span>
+          <span>Created RESTful API endpoints in Express (GET /api/products, POST /api/products)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;">
+          <span style="color:var(--accent3);font-size:1rem;">✓</span>
+          <span>Developed React ProductCard component for data display</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;">
+          <span style="color:var(--accent3);font-size:1rem;">✓</span>
+          <span>Implemented Axios for HTTP GET requests inside useEffect hook</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;">
+          <span style="color:var(--accent3);font-size:1rem;">✓</span>
+          <span>Handled loading spinner and error alert states</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;">
+          <span style="color:var(--accent3);font-size:1rem;">✓</span>
+          <span>Styled with Bootstrap 5.3 responsive grid</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /exp1 -->
+
+
+<!-- ══════════════════════════════════════
+     EXPERIMENT 2.3.2 — Redux Shopping Cart
+═══════════════════════════════════════════ -->
+<div id="panel-exp2" class="panel">
+  <div class="exp-header">
+    <div class="exp-badge badge-purple">EXPERIMENT 2.3.2</div>
+    <div class="exp-title">Redux Shopping Cart</div>
+    <div class="exp-sub">State management with Redux Toolkit — cart slice, reducers, localStorage persistence, DevTools</div>
+    <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap;">
+      <span class="tag-badge tag-react">React 18</span>
+      <span class="tag-badge tag-redux">Redux Toolkit 2.0</span>
+      <span class="tag-badge" style="background:#0f1a2a;color:#93c5fd;">Material UI 5.14</span>
+      <span class="tag-badge" style="background:#1a1a0a;color:#fcd34d;">localStorage</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Redux Code -->
+    <div class="section-card">
+      <div class="section-title"><i class="bi bi-boxes"></i> Redux Toolkit — Store Setup</div>
+
+      <div class="info-tabs">
+        <div class="info-tab active" onclick="switchInfoTab('redux','store')">store.js</div>
+        <div class="info-tab" onclick="switchInfoTab('redux','slice')">cartSlice.js</div>
+        <div class="info-tab" onclick="switchInfoTab('redux','component')">CartPage.jsx</div>
+      </div>
+
+      <div id="redux-store" class="info-pane active">
+        <div class="code-header">
+          <span>store/store.js</span>
+          <button class="copy-btn" onclick="copyCode('store-code')">Copy</button>
+        </div>
+        <pre class="code-block" id="store-code"><span class="kw">import</span> { configureStore } <span class="kw">from</span> <span class="str">'@reduxjs/toolkit'</span>;
+<span class="kw">import</span> cartReducer <span class="kw">from</span> <span class="str">'./cartSlice'</span>;
+
+<span class="cm">// Load state from localStorage</span>
+<span class="kw">const</span> <span class="fn">loadState</span> = () => {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> serialized = localStorage.<span class="fn">getItem</span>(<span class="str">'cartState'</span>);
+    <span class="kw">return</span> serialized ? <span class="fn">JSON.parse</span>(serialized) : <span class="kw">undefined</span>;
+  } <span class="kw">catch</span> { <span class="kw">return</span> <span class="kw">undefined</span>; }
+};
+
+<span class="kw">export const</span> store = <span class="fn">configureStore</span>({
+  reducer: { cart: cartReducer },
+  preloadedState: <span class="fn">loadState</span>()
+});
+
+<span class="cm">// Persist to localStorage on every state change</span>
+store.<span class="fn">subscribe</span>(() => {
+  <span class="kw">try</span> {
+    localStorage.<span class="fn">setItem</span>(<span class="str">'cartState'</span>,
+      <span class="fn">JSON.stringify</span>(store.<span class="fn">getState</span>())
+    );
+  } <span class="kw">catch</span> {}
+});</pre>
+      </div>
+
+      <div id="redux-slice" class="info-pane">
+        <div class="code-header">
+          <span>store/cartSlice.js</span>
+          <button class="copy-btn" onclick="copyCode('slice-code')">Copy</button>
+        </div>
+        <pre class="code-block" id="slice-code"><span class="kw">import</span> { createSlice } <span class="kw">from</span> <span class="str">'@reduxjs/toolkit'</span>;
+
+<span class="kw">const</span> cartSlice = <span class="fn">createSlice</span>({
+  name: <span class="str">'cart'</span>,
+  initialState: { items: [], total: <span class="num">0</span>, count: <span class="num">0</span> },
+  reducers: {
+    <span class="fn">addItem</span>(state, action) {
+      <span class="kw">const</span> existing = state.items.<span class="fn">find</span>(i => i.id === action.payload.id);
+      <span class="kw">if</span> (existing) {
+        existing.quantity += <span class="num">1</span>;
+      } <span class="kw">else</span> {
+        state.items.<span class="fn">push</span>({ ...action.payload, quantity: <span class="num">1</span> });
+      }
+      state.count += <span class="num">1</span>;
+      state.total += action.payload.price;
+    },
+    <span class="fn">removeItem</span>(state, action) {
+      <span class="kw">const</span> item = state.items.<span class="fn">find</span>(i => i.id === action.payload);
+      <span class="kw">if</span> (item) {
+        state.total -= item.price * item.quantity;
+        state.count -= item.quantity;
+        state.items = state.items.<span class="fn">filter</span>(i => i.id !== action.payload);
+      }
+    },
+    <span class="fn">updateQuantity</span>(state, action) {
+      <span class="kw">const</span> { id, qty } = action.payload;
+      <span class="kw">const</span> item = state.items.<span class="fn">find</span>(i => i.id === id);
+      <span class="kw">if</span> (item) {
+        <span class="kw">const</span> diff = qty - item.quantity;
+        item.quantity = qty;
+        state.count += diff;
+        state.total += diff * item.price;
+      }
+    },
+    <span class="fn">clearCart</span>(state) {
+      state.items = []; state.total = <span class="num">0</span>; state.count = <span class="num">0</span>;
+    }
+  }
+});
+
+<span class="kw">export const</span> { addItem, removeItem, updateQuantity, clearCart } = cartSlice.actions;
+<span class="kw">export default</span> cartSlice.reducer;</pre>
+      </div>
+
+      <div id="redux-component" class="info-pane">
+        <div class="code-header">
+          <span>pages/CartPage.jsx</span>
+          <button class="copy-btn" onclick="copyCode('cart-jsx-code')">Copy</button>
+        </div>
+        <pre class="code-block" id="cart-jsx-code"><span class="kw">import</span> { useSelector, useDispatch } <span class="kw">from</span> <span class="str">'react-redux'</span>;
+<span class="kw">import</span> { removeItem, updateQuantity, clearCart } <span class="kw">from</span> <span class="str">'../store/cartSlice'</span>;
+
+<span class="kw">export default function</span> <span class="fn">CartPage</span>() {
+  <span class="kw">const</span> { items, total, count } = <span class="fn">useSelector</span>(s => s.cart);
+  <span class="kw">const</span> dispatch = <span class="fn">useDispatch</span>();
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      <span class="tag">&lt;Typography</span> variant=<span class="str">"h5"</span><span class="tag">&gt;</span>Cart ({count} items)<span class="tag">&lt;/Typography&gt;</span>
+      {items.<span class="fn">map</span>(item => (
+        <span class="tag">&lt;CartItem</span>
+          key={item.id}
+          item={item}
+          onRemove={() => dispatch(<span class="fn">removeItem</span>(item.id))}
+          onUpdate={(qty) => dispatch(<span class="fn">updateQuantity</span>({ id: item.id, qty }))}
+        <span class="tag">/&gt;</span>
+      ))}
+      <span class="tag">&lt;Typography</span> variant=<span class="str">"h6"</span><span class="tag">&gt;</span>Total: ₹{total}<span class="tag">&lt;/Typography&gt;</span>
+      <span class="tag">&lt;Button</span> onClick={() => dispatch(<span class="fn">clearCart</span>())}<span class="tag">&gt;</span>
+        Clear Cart
+      <span class="tag">&lt;/Button&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}</pre>
+      </div>
+    </div>
+
+    <!-- Live Cart Demo -->
+    <div class="section-card">
+      <div class="section-title"><i class="bi bi-cart3"></i> Live Cart Demo</div>
+      <div class="demo-frame">
+        <div class="demo-toolbar">
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+          <span style="margin-left:.5rem;">Redux Shopping Cart</span>
+          <span style="margin-left:auto;color:var(--accent2);">Redux DevTools</span>
+        </div>
+        <div class="demo-body">
+          <div class="grid-2" style="gap:1.5rem;">
+            <!-- Left: Product list -->
+            <div>
+              <div style="font-size:.7rem;color:var(--muted);margin-bottom:.75rem;font-family:var(--mono);letter-spacing:.1em;">PRODUCTS CATALOG</div>
+              <div id="product-catalog"></div>
+            </div>
+            <!-- Right: Cart -->
+            <div>
+              <div style="font-size:.7rem;color:var(--muted);margin-bottom:.75rem;font-family:var(--mono);letter-spacing:.1em;">CART STATE</div>
+              <div id="cart-items-container"><div style="font-size:.8rem;color:var(--muted);text-align:center;padding:2rem 0;">Cart is empty</div></div>
+              <div class="cart-total-bar" style="margin-top:.75rem;">
+                <div>
+                  <div class="total-label">TOTAL</div>
+                  <div class="total-amount" id="cart-total">₹0</div>
+                </div>
+                <button class="checkout-btn" onclick="checkoutCart()">Checkout →</button>
+              </div>
+            </div>
+          </div>
+          <!-- Redux DevTools simulation -->
+          <div style="margin-top:1rem;">
+            <div style="font-size:.7rem;color:var(--muted);font-family:var(--mono);letter-spacing:.1em;margin-bottom:.5rem;">REDUX STATE TREE</div>
+            <div class="redux-state" id="redux-state-view">{ "cart": { "items": [], "total": 0, "count": 0 } }</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Objectives -->
+    <div class="section-card">
+      <div class="section-title"><i class="bi bi-list-check"></i> Objectives Achieved</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;">
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;"><span style="color:var(--accent3);">✓</span> Configured Redux store with configureStore and preloadedState</div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;"><span style="color:var(--accent3);">✓</span> Created cartSlice with addItem, removeItem, updateQuantity, clearCart reducers</div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;"><span style="color:var(--accent3);">✓</span> Implemented all cart operations with immutable Immer updates</div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;"><span style="color:var(--accent3);">✓</span> Connected components via useSelector + useDispatch hooks</div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;"><span style="color:var(--accent3);">✓</span> Persisted cart state to localStorage via store.subscribe()</div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /exp2 -->
+
+
+<!-- ══════════════════════════════════════
+     EXPERIMENT 2.3.3 — Real-Time Chat
+═══════════════════════════════════════════ -->
+<div id="panel-exp3" class="panel">
+  <div class="exp-header">
+    <div class="exp-badge badge-green">EXPERIMENT 2.3.3</div>
+    <div class="exp-title">Real-Time Chat with Socket.IO</div>
+    <div class="exp-sub">Bidirectional WebSocket communication — typing indicators, online users, instant broadcasting</div>
+    <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap;">
+      <span class="tag-badge tag-socket">Socket.IO 4.7</span>
+      <span class="tag-badge tag-react">React 18</span>
+      <span class="tag-badge tag-express">Express 4.18</span>
+      <span class="tag-badge" style="background:#0f1a2a;color:#93c5fd;">Material UI 5.14</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Socket Code -->
+    <div class="section-card">
+      <div class="section-title"><i class="bi bi-lightning"></i> Socket.IO Implementation</div>
+
+      <div class="info-tabs">
+        <div class="info-tab active" onclick="switchInfoTab('socket','server')">server.js</div>
+        <div class="info-tab" onclick="switchInfoTab('socket','client')">ChatApp.jsx</div>
+      </div>
+
+      <div id="socket-server" class="info-pane active">
+        <div class="code-header">
+          <span>server.js — Socket.IO + Express</span>
+          <button class="copy-btn" onclick="copyCode('socket-server-code')">Copy</button>
+        </div>
+        <pre class="code-block" id="socket-server-code"><span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> http = <span class="fn">require</span>(<span class="str">'http'</span>);
+<span class="kw">const</span> { Server } = <span class="fn">require</span>(<span class="str">'socket.io'</span>);
+<span class="kw">const</span> cors = <span class="fn">require</span>(<span class="str">'cors'</span>);
+
+<span class="kw">const</span> app = <span class="fn">express</span>();
+app.<span class="fn">use</span>(<span class="fn">cors</span>());
+<span class="kw">const</span> server = http.<span class="fn">createServer</span>(app);
+<span class="kw">const</span> io = <span class="kw">new</span> <span class="fn">Server</span>(server, {
+  cors: { origin: <span class="str">'http://localhost:3000'</span>, methods: [<span class="str">'GET'</span>,<span class="str">'POST'</span>] }
+});
+
+<span class="kw">const</span> users = <span class="kw">new</span> Map(); <span class="cm">// socketId → username</span>
+
+io.<span class="fn">on</span>(<span class="str">'connection'</span>, (socket) => {
+  console.<span class="fn">log</span>(<span class="str">'New connection:'</span>, socket.id);
+
+  <span class="cm">// User joins</span>
+  socket.<span class="fn">on</span>(<span class="str">'user:join'</span>, (username) => {
+    users.<span class="fn">set</span>(socket.id, username);
+    io.<span class="fn">emit</span>(<span class="str">'users:update'</span>, [...users.values()]);
+    socket.<span class="fn">broadcast</span>.<span class="fn">emit</span>(<span class="str">'system:message'</span>,
+      `${username} joined the chat`);
+  });
+
+  <span class="cm">// Message received → broadcast to all</span>
+  socket.<span class="fn">on</span>(<span class="str">'message:send'</span>, (data) => {
+    io.<span class="fn">emit</span>(<span class="str">'message:receive'</span>, {
+      ...data,
+      id: Date.<span class="fn">now</span>(),
+      timestamp: <span class="kw">new</span> <span class="fn">Date</span>().<span class="fn">toISOString</span>()
+    });
+  });
+
+  <span class="cm">// Typing indicator</span>
+  socket.<span class="fn">on</span>(<span class="str">'typing:start'</span>, () => {
+    socket.<span class="fn">broadcast</span>.<span class="fn">emit</span>(<span class="str">'typing:show'</span>, users.<span class="fn">get</span>(socket.id));
+  });
+  socket.<span class="fn">on</span>(<span class="str">'typing:stop'</span>, () => {
+    socket.<span class="fn">broadcast</span>.<span class="fn">emit</span>(<span class="str">'typing:hide'</span>);
+  });
+
+  <span class="cm">// Disconnect</span>
+  socket.<span class="fn">on</span>(<span class="str">'disconnect'</span>, () => {
+    <span class="kw">const</span> username = users.<span class="fn">get</span>(socket.id);
+    users.<span class="fn">delete</span>(socket.id);
+    io.<span class="fn">emit</span>(<span class="str">'users:update'</span>, [...users.values()]);
+    io.<span class="fn">emit</span>(<span class="str">'system:message'</span>, `${username} left the chat`);
+  });
+});
+
+server.<span class="fn">listen</span>(<span class="num">5000</span>, () => console.<span class="fn">log</span>(<span class="str">'Socket server on port 5000'</span>));</pre>
+      </div>
+
+      <div id="socket-client" class="info-pane">
+        <div class="code-header">
+          <span>components/ChatApp.jsx</span>
+          <button class="copy-btn" onclick="copyCode('chat-jsx-code')">Copy</button>
+        </div>
+        <pre class="code-block" id="chat-jsx-code"><span class="kw">import</span> { useState, useEffect, useRef } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { io } <span class="kw">from</span> <span class="str">'socket.io-client'</span>;
+
+<span class="kw">const</span> socket = <span class="fn">io</span>(<span class="str">'http://localhost:5000'</span>);
+
+<span class="kw">export default function</span> <span class="fn">ChatApp</span>() {
+  <span class="kw">const</span> [username, setUsername] = <span class="fn">useState</span>(<span class="str">''</span>);
+  <span class="kw">const</span> [joined, setJoined] = <span class="fn">useState</span>(<span class="kw">false</span>);
+  <span class="kw">const</span> [messages, setMessages] = <span class="fn">useState</span>([]);
+  <span class="kw">const</span> [input, setInput] = <span class="fn">useState</span>(<span class="str">''</span>);
+  <span class="kw">const</span> [typingUser, setTypingUser] = <span class="fn">useState</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> [onlineUsers, setOnlineUsers] = <span class="fn">useState</span>([]);
+  <span class="kw">const</span> messagesEndRef = <span class="fn">useRef</span>(<span class="kw">null</span>);
+  <span class="kw">let</span> typingTimeout;
+
+  <span class="fn">useEffect</span>(() => {
+    socket.<span class="fn">on</span>(<span class="str">'message:receive'</span>, (msg) =>
+      <span class="fn">setMessages</span>(prev => [...prev, { ...msg, type: <span class="str">'message'</span> }]));
+    socket.<span class="fn">on</span>(<span class="str">'system:message'</span>, (text) =>
+      <span class="fn">setMessages</span>(prev => [...prev, { text, type: <span class="str">'system'</span>, id: Date.<span class="fn">now</span>() }]));
+    socket.<span class="fn">on</span>(<span class="str">'users:update'</span>, setOnlineUsers);
+    socket.<span class="fn">on</span>(<span class="str">'typing:show'</span>, setTypingUser);
+    socket.<span class="fn">on</span>(<span class="str">'typing:hide'</span>, () => <span class="fn">setTypingUser</span>(<span class="kw">null</span>));
+    <span class="kw">return</span> () => socket.<span class="fn">removeAllListeners</span>();
+  }, []);
+
+  <span class="kw">const</span> <span class="fn">handleJoin</span> = () => {
+    socket.<span class="fn">emit</span>(<span class="str">'user:join'</span>, username);
+    <span class="fn">setJoined</span>(<span class="kw">true</span>);
+  };
+
+  <span class="kw">const</span> <span class="fn">sendMessage</span> = () => {
+    <span class="kw">if</span> (!input.<span class="fn">trim</span>()) <span class="kw">return</span>;
+    socket.<span class="fn">emit</span>(<span class="str">'message:send'</span>, { username, text: input });
+    <span class="fn">setInput</span>(<span class="str">''</span>);
+    socket.<span class="fn">emit</span>(<span class="str">'typing:stop'</span>);
+  };
+
+  <span class="kw">const</span> <span class="fn">handleTyping</span> = (e) => {
+    <span class="fn">setInput</span>(e.target.value);
+    socket.<span class="fn">emit</span>(<span class="str">'typing:start'</span>);
+    clearTimeout(typingTimeout);
+    typingTimeout = <span class="fn">setTimeout</span>(() => socket.<span class="fn">emit</span>(<span class="str">'typing:stop'</span>), <span class="num">1000</span>);
+  };
+  <span class="cm">// ... render JSX</span>
+}</pre>
+      </div>
+    </div>
+
+    <!-- Live Chat Demo -->
+    <div class="section-card">
+      <div class="section-title"><i class="bi bi-chat-dots"></i> Live Chat Demo</div>
+
+      <!-- Login -->
+      <div id="chat-login">
+        <div class="login-screen">
+          <div class="login-card">
+            <div class="login-icon">💬</div>
+            <div class="login-title">Join Chat Room</div>
+            <div class="login-sub">Enter your username to start chatting</div>
+            <input class="login-input" id="username-input" placeholder="Your username..." maxlength="20"
+              onkeydown="if(event.key==='Enter')joinChat()"/>
+            <button class="login-btn" onclick="joinChat()">Enter Chat →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat UI -->
+      <div id="chat-ui" style="display:none;">
+        <div class="chat-container">
+          <!-- Sidebar -->
+          <div class="sidebar">
+            <div class="sidebar-header">🟢 ONLINE</div>
+            <div id="online-users-list"></div>
+          </div>
+          <!-- Main -->
+          <div class="chat-main">
+            <div class="chat-header">
+              <div style="font-size:1.4rem;">💬</div>
+              <div>
+                <div class="chat-title" id="chat-username-header">Chat Room</div>
+                <div class="chat-sub" id="online-count">1 online</div>
+              </div>
+              <button onclick="leaveChat()" style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:.25rem .6rem;font-size:.7rem;cursor:pointer;">Leave</button>
+            </div>
+            <div class="messages-area" id="messages-area"></div>
+            <div class="typing-indicator" id="typing-indicator"></div>
+            <div class="chat-input-row">
+              <input class="chat-input" id="chat-input-field" placeholder="Type a message..."
+                onkeydown="if(event.key==='Enter')sendChatMessage()"
+                oninput="handleChatTyping()"/>
+              <button class="send-btn" onclick="sendChatMessage()"><i class="bi bi-send-fill"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Objectives -->
+    <div class="section-card">
+      <div class="section-title"><i class="bi bi-list-check"></i> Objectives Achieved</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;">
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;"><span style="color:var(--accent3);">✓</span> Socket.IO server with Express HTTP server integration</div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;"><span style="color:var(--accent3);">✓</span> Responsive chat UI with login screen, sidebar, message area</div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;"><span style="color:var(--accent3);">✓</span> Real-time messaging, broadcasting, and system notifications</div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;"><span style="color:var(--accent3);">✓</span> User connection/disconnection management with Map</div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;"><span style="color:var(--accent3);">✓</span> Typing indicators with debounce timeout</div>
+        <div style="display:flex;align-items:center;gap:.75rem;font-size:.82rem;"><span style="color:var(--accent3);">✓</span> Online user list with live updates</div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /exp3 -->
+
+<script>
+/* ═══════════════ TAB SWITCHING ═══════════════ */
+function switchTab(exp, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + exp).classList.add('active');
+  el.classList.add('active');
+}
+
+function switchInfoTab(group, tab) {
+  document.querySelectorAll(`[id^="${group}-"]`).forEach(p => p.classList.remove('active'));
+  document.getElementById(group + '-' + tab).classList.add('active');
+  event.target.closest('.section-card').querySelectorAll('.info-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+/* ═══════════════ COPY CODE ═══════════════ */
+function copyCode(id) {
+  const el = document.getElementById(id);
+  const text = el.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = el.previousElementSibling?.querySelector('.copy-btn') || document.querySelector(`[onclick="copyCode('${id}')"]`);
+    if(btn){ btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',1500); }
+  });
+}
+
+/* ═══════════════ EXP 1: PRODUCTS DEMO ═══════════════ */
+const mockProducts = [
+  { _id:'1', name:'Wireless Headphones', price:2999, category:'Electronics', emoji:'🎧' },
+  { _id:'2', name:'Mechanical Keyboard', price:4599, category:'Electronics', emoji:'⌨️' },
+  { _id:'3', name:'Desk Lamp', price:899,  category:'Home',        emoji:'💡' },
+  { _id:'4', name:'Coffee Mug',          price:349,  category:'Kitchen',     emoji:'☕' },
+  { _id:'5', name:'Running Shoes',       price:3499, category:'Sports',      emoji:'👟' },
+  { _id:'6', name:'Notebook Set',        price:299,  category:'Stationery',  emoji:'📓' },
+];
+
+function exp1Show(state) {
+  document.getElementById('exp1-loading').style.display = 'none';
+  document.getElementById('exp1-error').style.display   = 'none';
+  document.getElementById('exp1-products').style.display= 'none';
+
+  const status = document.getElementById('fetchStatus');
+
+  if(state === 'loading') {
+    document.getElementById('exp1-loading').style.display = 'block';
+    status.textContent = '● fetching...'; status.style.color = '#f59e0b';
+    setTimeout(() => exp1Show('products'), 1800);
+  } else if(state === 'error') {
+    document.getElementById('exp1-error').style.display = 'block';
+    status.textContent = '✗ error 500'; status.style.color = '#ef4444';
+  } else {
+    const grid = document.getElementById('product-grid');
+    grid.innerHTML = mockProducts.map(p => `
+      <div class="product-card">
+        <div class="product-img">${p.emoji}</div>
+        <div class="product-cat">${p.category}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-price">₹${p.price.toLocaleString('en-IN')}</div>
+      </div>
+    `).join('');
+    document.getElementById('exp1-products').style.display = 'block';
+    status.textContent = '✓ 200 OK'; status.style.color = '#22c55e';
+  }
+}
+
+/* ═══════════════ EXP 2: REDUX CART ═══════════════ */
+const catalogProducts = [
+  { id:1, name:'Headphones', price:2999, emoji:'🎧' },
+  { id:2, name:'Keyboard',   price:4599, emoji:'⌨️' },
+  { id:3, name:'Desk Lamp',  price:899,  emoji:'💡' },
+  { id:4, name:'Coffee Mug', price:349,  emoji:'☕' },
+];
+let cartState = { items: [], total: 0, count: 0 };
+
+function renderCatalog() {
+  const el = document.getElementById('product-catalog');
+  if(!el) return;
+  el.innerHTML = catalogProducts.map(p => `
+    <div style="display:flex;align-items:center;gap:.75rem;padding:.65rem;
+      background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:.5rem;">
+      <span style="font-size:1.5rem;">${p.emoji}</span>
+      <div style="flex:1;">
+        <div style="font-size:.82rem;font-weight:700;">${p.name}</div>
+        <div style="font-family:var(--mono);font-size:.72rem;color:var(--accent3);">₹${p.price}</div>
+      </div>
+      <button onclick="addToCart(${p.id})" style="background:var(--accent2);color:white;border:none;
+        border-radius:4px;padding:.3rem .7rem;font-size:.7rem;cursor:pointer;">+ Add</button>
+    </div>
+  `).join('');
+}
+
+function addToCart(id) {
+  const product = catalogProducts.find(p => p.id === id);
+  const existing = cartState.items.find(i => i.id === id);
+  if(existing) {
+    existing.quantity++;
+  } else {
+    cartState.items.push({ ...product, quantity: 1 });
+  }
+  cartState.count++;
+  cartState.total += product.price;
+  renderCart();
+}
+
+function removeFromCart(id) {
+  const item = cartState.items.find(i => i.id === id);
+  if(item) {
+    cartState.total -= item.price * item.quantity;
+    cartState.count -= item.quantity;
+    cartState.items = cartState.items.filter(i => i.id !== id);
+    renderCart();
+  }
+}
+
+function changeQty(id, delta) {
+  const item = cartState.items.find(i => i.id === id);
+  if(!item) return;
+  const newQty = item.quantity + delta;
+  if(newQty < 1) { removeFromCart(id); return; }
+  cartState.count += delta;
+  cartState.total += delta * item.price;
+  item.quantity = newQty;
+  renderCart();
+}
+
+function checkoutCart() {
+  if(cartState.items.length === 0) return;
+  alert(`✓ Order placed!\n\n${cartState.items.map(i=>`${i.emoji} ${i.name} x${i.quantity} = ₹${i.price*i.quantity}`).join('\n')}\n\nTotal: ₹${cartState.total}`);
+  cartState = { items: [], total: 0, count: 0 };
+  renderCart();
+}
+
+function renderCart() {
+  const container = document.getElementById('cart-items-container');
+  const totalEl   = document.getElementById('cart-total');
+  const stateEl   = document.getElementById('redux-state-view');
+  if(!container) return;
+
+  if(cartState.items.length === 0) {
+    container.innerHTML = '<div style="font-size:.8rem;color:var(--muted);text-align:center;padding:2rem 0;">Cart is empty</div>';
+  } else {
+    container.innerHTML = cartState.items.map(item => `
+      <div class="cart-item">
+        <div class="cart-icon">${item.emoji}</div>
+        <div class="cart-info">
+          <div class="cart-name">${item.name}</div>
+          <div class="cart-price">₹${item.price} each</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+          <span class="qty-val">${item.quantity}</span>
+          <button class="qty-btn" onclick="changeQty(${item.id},+1)">+</button>
+        </div>
+        <button class="remove-btn" onclick="removeFromCart(${item.id})"><i class="bi bi-trash3"></i></button>
+      </div>
+    `).join('');
+  }
+
+  if(totalEl) totalEl.textContent = '₹' + cartState.total.toLocaleString('en-IN');
+  if(stateEl) stateEl.textContent = JSON.stringify({
+    cart: {
+      items: cartState.items.map(i=>({id:i.id,name:i.name,price:i.price,quantity:i.quantity})),
+      total: cartState.total,
+      count: cartState.count
+    }
+  }, null, 2);
+}
+
+/* ═══════════════ EXP 3: CHAT ═══════════════ */
+const avatarColors = ['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444','#ec4899'];
+let chatUsername = '';
+let chatMessages = [];
+let onlineUsers  = [];
+let typingTimer  = null;
+let isTyping     = false;
+const botNames   = ['Alice','Bob','Carol','Dave'];
+let botIndex     = 0;
+
+function getAvatar(name) {
+  return name ? name[0].toUpperCase() : '?';
+}
+function getColor(name) {
+  let hash = 0;
+  for(let c of name) hash += c.charCodeAt(0);
+  return avatarColors[hash % avatarColors.length];
+}
+
+function joinChat() {
+  const inp = document.getElementById('username-input');
+  const name = inp.value.trim();
+  if(!name) { inp.style.borderColor = '#ef4444'; return; }
+  chatUsername = name;
+  onlineUsers = [name, ...botNames.slice(0, 2)];
+
+  document.getElementById('chat-login').style.display = 'none';
+  document.getElementById('chat-ui').style.display   = 'block';
+  document.getElementById('chat-username-header').textContent = '👤 ' + name;
+
+  addSystemMsg(name + ' joined the chat');
+  renderOnlineUsers();
+  addBotMessage(botNames[0], 'Hey there! Welcome to the chat 👋');
+  setTimeout(() => addBotMessage(botNames[1], 'Hello! Good to see you here 😊'), 1500);
+}
+
+function leaveChat() {
+  document.getElementById('chat-login').style.display = 'block';
+  document.getElementById('chat-ui').style.display   = 'none';
+  document.getElementById('username-input').value    = '';
+  chatMessages = []; onlineUsers = [];
+  document.getElementById('messages-area').innerHTML = '';
+}
+
+function addSystemMsg(text) {
+  chatMessages.push({ type:'system', text });
+  appendMessage({ type:'system', text });
+}
+
+function addBotMessage(from, text) {
+  const msg = { type:'message', username:from, text, time: new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) };
+  chatMessages.push(msg);
+  appendMessage(msg);
+}
+
+function sendChatMessage() {
+  const inp = document.getElementById('chat-input-field');
+  const text = inp.value.trim();
+  if(!text) return;
+  inp.value = '';
+
+  const msg = { type:'message', username: chatUsername, text, own: true,
+    time: new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) };
+  chatMessages.push(msg);
+  appendMessage(msg);
+  hideTyping();
+
+  // Bot auto-reply
+  const bot = botNames[botIndex % botNames.length];
+  botIndex++;
+  const replies = [
+    'That\'s interesting! Tell me more 🤔',
+    'Totally agree with you! 👍',
+    'Haha, that\'s funny! 😄',
+    'Makes sense! Good point.',
+    'Cool! What do you think about it?',
+    'I was just thinking the same thing! 🙌',
+  ];
+  const reply = replies[Math.floor(Math.random()*replies.length)];
+
+  showTypingIndicator(bot);
+  setTimeout(() => {
+    hideTypingIndicator();
+    addBotMessage(bot, reply);
+  }, 1200 + Math.random()*800);
+}
+
+function appendMessage(msg) {
+  const area = document.getElementById('messages-area');
+  if(!area) return;
+  const div = document.createElement('div');
+
+  if(msg.type === 'system') {
+    div.className = 'system-msg';
+    div.innerHTML = `<span>⚙ ${msg.text}</span>`;
+  } else {
+    const own = msg.own || msg.username === chatUsername;
+    div.className = 'msg-row' + (own ? ' own' : '');
+    const col = getColor(msg.username);
+    div.innerHTML = `
+      <div class="msg-avatar" style="background:${col}20;color:${col};border:1px solid ${col}40;">
+        ${getAvatar(msg.username)}
+      </div>
+      <div>
+        <div class="msg-meta">${msg.username} · ${msg.time}</div>
+        <div class="msg-bubble ${own ? 'own-bubble' : 'them'}">${escHtml(msg.text)}</div>
+      </div>
+    `;
+  }
+
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+let typingBotName = null;
+function showTypingIndicator(name) {
+  typingBotName = name;
+  const el = document.getElementById('typing-indicator');
+  if(el) el.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div><span>${name} is typing...</span>`;
+}
+function hideTypingIndicator() {
+  const el = document.getElementById('typing-indicator');
+  if(el) el.innerHTML = '';
+}
+
+function handleChatTyping() {
+  if(!isTyping) { isTyping = true; }
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(hideTyping, 1000);
+}
+function hideTyping() { isTyping = false; }
+
+function renderOnlineUsers() {
+  const el = document.getElementById('online-users-list');
+  const countEl = document.getElementById('online-count');
+  if(!el) return;
+  el.innerHTML = onlineUsers.map(u => `
+    <div class="online-user">
+      <div class="avatar" style="background:${getColor(u)}20;color:${getColor(u)};border:1px solid ${getColor(u)}40;font-size:.55rem;">
+        ${getAvatar(u)}
+      </div>
+      <span style="font-size:.75rem;">${u}</span>
+      <div class="online-dot"></div>
+    </div>
+  `).join('');
+  if(countEl) countEl.textContent = onlineUsers.length + ' online';
+}
+
+/* ═══════════════ INIT ═══════════════ */
+window.onload = () => {
+  renderCatalog();
+  renderCart();
+};
+</script>
+</body>
+</html>
